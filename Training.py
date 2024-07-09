@@ -11,8 +11,22 @@ while True:
 
     if first is None:
         first= gau
-    dif=cv2.absdiff(first,gau)    
-    cv2.imshow("vid",dif)
+    dif=cv2.absdiff(first,gau)
+    thresh = cv2.threshold(dif,60,255,cv2.THRESH_BINARY)[1]
+    filter= cv2.dilate (thresh,None,iterations=2)
+
+    cv2.imshow("vid",filter)
+
+    contours , check = cv2.findContours(filter,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    for con in contours:
+        if cv2.contourArea(con) <5000:
+            continue
+        x,y,w,h=cv2.boundingRect(con)
+        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0))
+
+
+
+    cv2.imshow("video",frame)
     key = cv2.waitKey(1)
     if key == ord("q"):
         break
